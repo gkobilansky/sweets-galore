@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/og/favicon-32x32.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sweets Galore - Candy Merge Puzzle</title>
+
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="Sweets Galore - Candy Merge Puzzle" />
+    <meta name="description" content="A gravity-fed merge puzzler. Drop adorable candies, cupcakes, and sweet treats into a glass jar. Match and merge your way to the legendary Big Ol Cake-a-rinos!" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://sweets-galore.com" />
+    <meta property="og:title" content="Sweets Galore - Candy Merge Puzzle" />
+    <meta property="og:description" content="A gravity-fed merge puzzler. Drop adorable candies, cupcakes, and sweet treats into a glass jar. Match and merge your way to the legendary Big Ol Cake-a-rinos!" />
+    <meta property="og:image" content="/og/og-image-1200x630.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Sweets Galore game logo with cute candy characters" />
+    <meta property="og:site_name" content="Sweets Galore" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://sweets-galore.com" />
+    <meta property="twitter:title" content="Sweets Galore - Candy Merge Puzzle" />
+    <meta property="twitter:description" content="A gravity-fed merge puzzler. Drop adorable candies, cupcakes, and sweet treats into a glass jar. Match and merge your way to the legendary Big Ol Cake-a-rinos!" />
+    <meta property="twitter:image" content="/og/og-image-twitter.png" />
+    <meta property="twitter:image:alt" content="Sweets Galore game logo with cute candy characters" />
+
+    <!-- Additional Social Media Images -->
+    <meta property="og:image" content="/og/og-image-1200x1200.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="1200" />
+    
+    <!-- Apple Touch Icon & Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/og/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/og/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/og/favicon-16x16.png" />
+    
+    <!-- Additional Meta -->
+    <meta name="theme-color" content="#FFB6C1" />
+    <meta name="keywords" content="puzzle game, merge game, candy, sweets, dessert, gravity puzzle, kawaii, casual game" />
+    <meta name="author" content="Sweets Galore" />
+    
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+  </head>
+  <body>
+    <div id="app">
+      <aside id="info-panel" aria-labelledby="info-panel-title">
+        <button type="button" class="info-panel__close" aria-label="Close game info">&times;</button>
+        <img src="/icons/sweets-banner.jpg" alt="Sweets Galore - Candy Merge Puzzle" id="info-panel-title" class="info-panel__banner" />
+        <div class="info-panel__content">
+        <div class="info-panel__body">
+          <p>
+            Sweets Galore is a gravity-fed merge puzzler. Drop adorable gummy bears, lollipops, cupcakes and more into a candy jar.
+          </p>
+          <p>
+            Guide each treat into sweet collisions to fuse matching tiers and climb the ladder toward the legendary Big Ol Cake-a-rinos.
+          </p>
+          <p>
+            Make combos, watch your desserts stack up and get the highest score you can before the jar overflows!
+          </p>
+        </div>
+        <div class="info-panel__credits">
+          <p>Built by Mila and Evie with a little help from <a href="https://claude.ai/code" target="_blank" rel="noreferrer noopener">Claude Code</a> and <a href="https://lansky.tech" target="_blank" rel="noreferrer noopener">lansky.tech</a></p>
+        </div>
+        </div>
+      </aside>
+      <div class="game-stage">
+        <div id="game-container">
+          <div class="game-controls" role="group" aria-label="Game controls">
+            <button
+              id="sound-toggle"
+              class="control-toggle sound-toggle"
+              type="button"
+              data-state="unmuted"
+              aria-pressed="false"
+              aria-label="Toggle game sound"
+              title="Mute sound"
+            >
+              <span class="sound-toggle__glyph" aria-hidden="true">🔊</span>
+              <span class="sr-only">Toggle sound</span>
+            </button>
+            <button
+              id="info-toggle"
+              class="control-toggle info-toggle"
+              type="button"
+              aria-controls="info-panel"
+              aria-expanded="false"
+              aria-label="Open game info"
+            >
+              i
+            </button>
+          </div>
+          <canvas id="pixi-screen"></canvas>
+        </div>
+        <aside class="game-goodies">
+          <p class="game-goodies__tagline">
+            Match sweets. Make combos. Get that sugar rush!
+          </p>
+        </aside>
+      </div>
+      <div id="sidebar-panels">
+        <aside id="leaderboard-panel" aria-live="polite">
+          <h2>🏆 Weekly Top 5</h2>
+          <div id="leaderboard-list" data-state="loading" aria-live="polite"></div>
+        </aside>
+        <section id="friends-panel" aria-label="Friends tier list"></section>
+      </div>
+    </div>
+    <footer class="site-footer site-footer--no-art" aria-label="Sweets Galore footer">
+      <div class="site-footer__content">
+        <p class="site-footer__eyebrow">
+          A sweet little game
+        </p>
+        <h2 class="site-footer__title">Drop treats. Make matches. Satisfy your sweet tooth!</h2>
+        <p class="site-footer__tagline">
+          Built by Mila and Evie with a little help from <a href="https://claude.ai/code" target="_blank" rel="noreferrer noopener">Claude Code</a> and <a href="https://lansky.tech" target="_blank" rel="noreferrer noopener">lansky.tech</a>
+        </p>
+        <ul class="site-footer__social" aria-label="Social links">
+          <li>
+            <a href="https://instagram.com/lansky.tech" target="_blank" rel="noreferrer noopener" aria-label="Follow on Instagram @lansky.tech">
+              <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                <rect x="3" y="3" width="18" height="18" rx="5" ry="5"></rect>
+                <circle cx="12" cy="12" r="4.2"></circle>
+                <circle cx="17.5" cy="6.5" r="1" class="icon-solid"></circle>
+              </svg>
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/gkobilansky" target="_blank" rel="noreferrer noopener" aria-label="View on GitHub @gkobilansky">
+              <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z"></path>
+              </svg>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </footer>
+    <div id="info-backdrop" class="info-backdrop" hidden></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
