@@ -21,18 +21,18 @@
       "purpose": "maskable any"
     },
     {
-      "src": "/og/og-image-square.png",
+      "src": "/og/og-image-square.webp",
       "sizes": "1024x1024",
-      "type": "image/png",
+      "type": "image/webp",
       "purpose": "any"
     }
   ],
   "categories": ["games", "entertainment"],
   "screenshots": [
     {
-      "src": "/og/og-image-1200x630.png",
+      "src": "/og/og-image-1200x630.webp",
       "sizes": "1200x630",
-      "type": "image/png",
+      "type": "image/webp",
       "form_factor": "wide"
     }
   ]
