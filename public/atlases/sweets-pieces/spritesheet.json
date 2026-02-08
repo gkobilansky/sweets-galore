@@ -1,0 +1,108 @@
+{
+	"meta": {
+		"image": "spritesheet.png",
+		"size": {"w":1400,"h":908},
+		"scale": "1"
+	},
+	"frames": {
+		"big-ol-cake-a-rinos":
+		{
+			"frame": {"x":2,"y":2,"w":520,"h":520},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {"x":0,"y":0,"w":520,"h":520},
+			"sourceSize": {"w":520,"h":520}
+		}
+,
+		"abby-apples":
+		{
+			"frame": {"x":524,"y":2,"w":440,"h":440},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {"x":0,"y":0,"w":440,"h":440},
+			"sourceSize": {"w":440,"h":440}
+		}
+,
+		"vanilla-ice-ice-baby":
+		{
+			"frame": {"x":966,"y":2,"w":354,"h":354},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {"x":0,"y":0,"w":354,"h":354},
+			"sourceSize": {"w":354,"h":354}
+		}
+,
+		"speedy-shake":
+		{
+			"frame": {"x":2,"y":524,"w":320,"h":320},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {"x":0,"y":0,"w":320,"h":320},
+			"sourceSize": {"w":320,"h":320}
+		}
+,
+		"frosty-franny":
+		{
+			"frame": {"x":324,"y":524,"w":260,"h":260},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {"x":0,"y":0,"w":260,"h":260},
+			"sourceSize": {"w":260,"h":260}
+		}
+,
+		"dodo-donut":
+		{
+			"frame": {"x":586,"y":524,"w":230,"h":230},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {"x":0,"y":0,"w":230,"h":230},
+			"sourceSize": {"w":230,"h":230}
+		}
+,
+		"coco-dude":
+		{
+			"frame": {"x":818,"y":524,"w":180,"h":180},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {"x":0,"y":0,"w":180,"h":180},
+			"sourceSize": {"w":180,"h":180}
+		}
+,
+		"lady-pop":
+		{
+			"frame": {"x":1000,"y":524,"w":140,"h":140},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {"x":0,"y":0,"w":140,"h":140},
+			"sourceSize": {"w":140,"h":140}
+		}
+,
+		"mellow-marcy":
+		{
+			"frame": {"x":1142,"y":524,"w":130,"h":130},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {"x":0,"y":0,"w":130,"h":130},
+			"sourceSize": {"w":130,"h":130}
+		}
+,
+		"fruity-tutti":
+		{
+			"frame": {"x":1274,"y":524,"w":94,"h":94},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {"x":0,"y":0,"w":94,"h":94},
+			"sourceSize": {"w":94,"h":94}
+		}
+,
+		"buddy-bear":
+		{
+			"frame": {"x":2,"y":846,"w":60,"h":60},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {"x":0,"y":0,"w":60,"h":60},
+			"sourceSize": {"w":60,"h":60}
+		}
+
+	}
+}
