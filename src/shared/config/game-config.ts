@@ -1,3 +1,5 @@
+import pieceSizes from './piece-sizes.json';
+
 export interface TierConfig {
   id: number;
   name: string;
@@ -7,6 +9,12 @@ export interface TierConfig {
   frames: string[];
   cap?: boolean;
 }
+
+// Calculate radius from sprite size using shared scale factor
+const getRadius = (id: number): number => {
+  const piece = pieceSizes.pieces.find(p => p.id === id);
+  return piece ? Math.round(piece.spriteSize * pieceSizes.scale) : 30;
+};
 
 export interface GameConfig {
   // Display settings
@@ -64,11 +72,12 @@ export const GAME_CONFIG: GameConfig = {
   
   // Tier system
   allowedSpawnTierIds: [1,2,3,4,5],
+  // Radii derived from piece-sizes.json (spriteSize * scale)
   tiers: [
     {
       id: 1,
       name: "Buddy Bear",
-      radius: 16,
+      radius: getRadius(1),
       points: 2,
       color: 0xFFB6C1, // light pink
       frames: ["buddy-bear", "buddy-bear-1"]
@@ -76,7 +85,7 @@ export const GAME_CONFIG: GameConfig = {
     {
       id: 2,
       name: "Fruity Tutti",
-      radius: 22,
+      radius: getRadius(2),
       points: 4,
       color: 0xFF6B6B, // coral
       frames: ["fruity-tutti", "fruity-tutti-1"]
@@ -84,7 +93,7 @@ export const GAME_CONFIG: GameConfig = {
     {
       id: 3,
       name: "Mellow Marcy",
-      radius: 28,
+      radius: getRadius(3),
       points: 6,
       color: 0xFFFAFA, // snow white
       frames: ["mellow-marcy", "mellow-marcy-1"]
@@ -92,7 +101,7 @@ export const GAME_CONFIG: GameConfig = {
     {
       id: 4,
       name: "Lady Pop",
-      radius: 33,
+      radius: getRadius(4),
       points: 8,
       color: 0xE066FF, // orchid
       frames: ["lady-pop", "lady-pop-1"]
@@ -100,7 +109,7 @@ export const GAME_CONFIG: GameConfig = {
     {
       id: 5,
       name: "Coco Dude",
-      radius: 42,
+      radius: getRadius(5),
       points: 10,
       color: 0x8B4513, // chocolate
       frames: ["coco-dude", "coco-dude-1"]
@@ -108,7 +117,7 @@ export const GAME_CONFIG: GameConfig = {
     {
       id: 6,
       name: "Dodo Donut",
-      radius: 54,
+      radius: getRadius(6),
       points: 12,
       color: 0xFFE4B5, // peach
       frames: ["dodo-donut"]
@@ -116,7 +125,7 @@ export const GAME_CONFIG: GameConfig = {
     {
       id: 7,
       name: "Frosty Franny",
-      radius: 62,
+      radius: getRadius(7),
       points: 14,
       color: 0xFFB6E1, // pink frosting
       frames: ["frosty-franny"]
@@ -124,7 +133,7 @@ export const GAME_CONFIG: GameConfig = {
     {
       id: 8,
       name: "Speedy Shake",
-      radius: 70,
+      radius: getRadius(8),
       points: 16,
       color: 0xF5DEB3, // vanilla
       frames: ["speedy-shake"]
@@ -132,7 +141,7 @@ export const GAME_CONFIG: GameConfig = {
     {
       id: 9,
       name: "Vanilla Ice Ice Baby",
-      radius: 80,
+      radius: getRadius(9),
       points: 18,
       color: 0xFFFACD, // lemon chiffon
       frames: ["vanilla-ice-ice-baby"]
@@ -140,7 +149,7 @@ export const GAME_CONFIG: GameConfig = {
     {
       id: 10,
       name: "Abby Apples",
-      radius: 95,
+      radius: getRadius(10),
       points: 20,
       color: 0xDC143C, // crimson
       frames: ["abby-apples"]
@@ -148,7 +157,7 @@ export const GAME_CONFIG: GameConfig = {
     {
       id: 11,
       name: "Big Ol Cake-a-rinos",
-      radius: 115,
+      radius: getRadius(11),
       points: 22,
       color: 0xFFC0CB, // pink
       frames: ["big-ol-cake-a-rinos"],

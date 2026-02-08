@@ -1,7 +1,7 @@
 {
 	"meta": {
 		"image": "spritesheet.png",
-		"size": {"w":1400,"h":908},
+		"size": {"w":1400,"h":984},
 		"scale": "1"
 	},
 	"frames": {
@@ -70,38 +70,38 @@
 ,
 		"lady-pop":
 		{
-			"frame": {"x":1000,"y":524,"w":140,"h":140},
+			"frame": {"x":1000,"y":524,"w":160,"h":160},
 			"rotated": false,
 			"trimmed": false,
-			"spriteSourceSize": {"x":0,"y":0,"w":140,"h":140},
-			"sourceSize": {"w":140,"h":140}
+			"spriteSourceSize": {"x":0,"y":0,"w":160,"h":160},
+			"sourceSize": {"w":160,"h":160}
 		}
 ,
 		"mellow-marcy":
 		{
-			"frame": {"x":1142,"y":524,"w":130,"h":130},
+			"frame": {"x":1162,"y":524,"w":142,"h":142},
 			"rotated": false,
 			"trimmed": false,
-			"spriteSourceSize": {"x":0,"y":0,"w":130,"h":130},
-			"sourceSize": {"w":130,"h":130}
+			"spriteSourceSize": {"x":0,"y":0,"w":142,"h":142},
+			"sourceSize": {"w":142,"h":142}
 		}
 ,
 		"fruity-tutti":
 		{
-			"frame": {"x":1274,"y":524,"w":94,"h":94},
+			"frame": {"x":2,"y":846,"w":136,"h":136},
 			"rotated": false,
 			"trimmed": false,
-			"spriteSourceSize": {"x":0,"y":0,"w":94,"h":94},
-			"sourceSize": {"w":94,"h":94}
+			"spriteSourceSize": {"x":0,"y":0,"w":136,"h":136},
+			"sourceSize": {"w":136,"h":136}
 		}
 ,
 		"buddy-bear":
 		{
-			"frame": {"x":2,"y":846,"w":60,"h":60},
+			"frame": {"x":140,"y":846,"w":125,"h":125},
 			"rotated": false,
 			"trimmed": false,
-			"spriteSourceSize": {"x":0,"y":0,"w":60,"h":60},
-			"sourceSize": {"w":60,"h":60}
+			"spriteSourceSize": {"x":0,"y":0,"w":125,"h":125},
+			"sourceSize": {"w":125,"h":125}
 		}
 
 	}

@@ -13,25 +13,23 @@ cd "$(dirname "$0")/.."
 RAW_DIR="public/atlases/sweets-pieces/raw"
 OUTPUT_DIR="public/atlases/sweets-pieces"
 TEMP_DIR="$RAW_DIR/resized"
+SIZES_JSON="src/shared/config/piece-sizes.json"
 
-# Piece definitions: name:size (sorted largest to smallest for packing)
-PIECES=(
-  "big-ol-cake-a-rinos:520"
-  "abby-apples:440"
-  "vanilla-ice-ice-baby:354"
-  "speedy-shake:320"
-  "frosty-franny:260"
-  "dodo-donut:230"
-  "coco-dude:180"
-  "coco-dude-1:180"
-  "lady-pop:140"
-  "lady-pop-1:140"
-  "mellow-marcy:130"
-  "mellow-marcy-1:130"
-  "fruity-tutti:94"
-  "fruity-tutti-1:94"
-  "buddy-bear:60"
-  "buddy-bear-1:60"
+# Build PIECES array from piece-sizes.json (sorted largest to smallest)
+# Each piece gets a "-1" variant for animation frames
+PIECES=()
+while IFS= read -r line; do
+  name=$(echo "$line" | cut -d: -f1)
+  size=$(echo "$line" | cut -d: -f2)
+  PIECES+=("$name:$size")
+  # Add -1 variant for pieces that have animation frames
+  PIECES+=("$name-1:$size")
+done < <(
+  # Parse JSON and sort by size descending
+  grep -o '"name": *"[^"]*"\|"spriteSize": *[0-9]*' "$SIZES_JSON" | \
+  paste - - | \
+  sed 's/"name": *"\([^"]*\)".*"spriteSize": *\([0-9]*\)/\1:\2/' | \
+  sort -t: -k2 -rn
 )
 
 # Check for ImageMagick
@@ -69,7 +67,7 @@ for entry in "${PIECES[@]}"; do
   if [ -n "$src" ] && [ -f "$src" ]; then
     echo "  ✓ $piece (${size}x${size}) <- $(basename "$src")"
 
-    # Remove background - try green first, then white (floodfill from corners)
+    # Remove background (floodfill from corners), trim, resize to target
     magick "$src" \
       -alpha set \
       -channel RGBA \
