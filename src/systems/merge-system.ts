@@ -172,7 +172,7 @@ export class MergeSystem {
       }
 
       if (piecesMergedThisFrame.has(candidate.piece1.id) || piecesMergedThisFrame.has(candidate.piece2.id)) {
-        const label = candidate.mode === 'big-stoner' ? 'Big Stoner clear' : 'Merge';
+        const label = candidate.mode === 'cap-piece' ? 'Cap piece clear' : 'Merge';
         console.log(`${label} skipped - piece already merged earlier this frame`);
         candidatesToRemove.push(key);
         continue;
@@ -241,7 +241,7 @@ export class MergeSystem {
       return false;
     }
 
-    const label = candidate.mode === 'big-stoner' ? 'Big Stoner clear' : 'Merge';
+    const label = candidate.mode === 'cap-piece' ? 'Cap piece clear' : 'Merge';
     console.log(`${label} ready - distance: ${distance.toFixed(2)} (max: ${maxDistance.toFixed(2)})`);
     return true;
   }

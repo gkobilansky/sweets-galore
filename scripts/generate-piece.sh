@@ -15,7 +15,12 @@
 set -e
 cd "$(dirname "$0")/.."
 
-API_KEY="AIzaSyDjo3dgHlrmXLc_U8FTYO8LT1ekBjob-D8"
+# API key from environment variable
+if [ -z "$GEMINI_API_KEY" ]; then
+  echo "Error: GEMINI_API_KEY environment variable not set"
+  exit 1
+fi
+
 OUTPUT_DIR="public/atlases/sweets-pieces/raw"
 SCRIPT_PATH=".agents/skills/nano-banana-pro/scripts/generate_image.py"
 
@@ -98,7 +103,7 @@ if [ "$MODE" == "edit" ]; then
     --filename "$OUTPUT_FILE" \
     --input-image "$INPUT_IMAGE" \
     --resolution 1K \
-    --api-key "$API_KEY"
+    --api-key "$GEMINI_API_KEY"
 
 elif [ "$MODE" == "ref" ]; then
   echo "Mode: GENERATE with reference"
@@ -113,7 +118,7 @@ elif [ "$MODE" == "ref" ]; then
     --filename "$OUTPUT_FILE" \
     --input-image "$INPUT_IMAGE" \
     --resolution 1K \
-    --api-key "$API_KEY"
+    --api-key "$GEMINI_API_KEY"
 
 else
   echo "Mode: GENERATE new"
@@ -125,7 +130,7 @@ else
     --prompt "$STYLE_PREFIX, $DESCRIPTION" \
     --filename "$OUTPUT_FILE" \
     --resolution 1K \
-    --api-key "$API_KEY"
+    --api-key "$GEMINI_API_KEY"
 fi
 
 if [ $? -eq 0 ]; then

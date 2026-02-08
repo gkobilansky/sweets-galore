@@ -3,7 +3,12 @@
 # Sweets Galore - Candy Piece Generator
 # Uses Nano Banana Pro (Gemini API) to generate game sprites
 
-API_KEY="AIzaSyDjo3dgHlrmXLc_U8FTYO8LT1ekBjob-D8"
+# API key from environment variable
+if [ -z "$GEMINI_API_KEY" ]; then
+  echo "Error: GEMINI_API_KEY environment variable not set"
+  exit 1
+fi
+
 OUTPUT_DIR="public/atlases/sweets-pieces/raw"
 SCRIPT_PATH="$HOME/.claude/skills/nano-banana-pro/scripts/generate_image.py"
 
@@ -49,7 +54,7 @@ for piece in "${PIECES[@]}"; do
     --prompt "$full_prompt" \
     --filename "$filename" \
     --resolution 1K \
-    --api-key "$API_KEY"
+    --api-key "$GEMINI_API_KEY"
 
   if [ $? -eq 0 ]; then
     echo "  ✓ Saved: $filename"
