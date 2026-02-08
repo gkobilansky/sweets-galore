@@ -212,6 +212,13 @@ hr {
   text-decoration: underline;
 }
 
+.info-panel__logo {
+  height: 28px;
+  width: auto;
+  vertical-align: middle;
+  border-radius: 4px;
+}
+
 .info-panel__form-status {
   min-height: 1.25em;
   margin: 0;
@@ -617,9 +624,11 @@ hr {
 }
 
 .site-footer__logo {
-  height: 18px;
+  height: 32px;
   width: auto;
-  filter: drop-shadow(0 2px 4px rgba(255, 105, 180, 0.25));
+  vertical-align: middle;
+  border-radius: 4px;
+  margin-left: 4px;
 }
 
 .site-footer__title {
@@ -681,6 +690,14 @@ hr {
 .site-footer__social svg .icon-solid {
   fill: currentColor;
   stroke: none;
+}
+
+.site-footer__logo-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 2px solid white;
+  box-shadow: 0 0 0 1px rgba(255, 105, 180, 0.3);
 }
 
 .site-footer__links {
