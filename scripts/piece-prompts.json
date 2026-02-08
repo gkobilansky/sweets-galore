@@ -1,0 +1,86 @@
+{
+  "stylePrefix": "cute kawaii candy character, pastel colors, solid white background, game sprite icon, centered, chibi style",
+
+  "pieces": {
+    "buddy-bear": {
+      "size": 60,
+      "description": "red gummy bear candy with full teddy bear body shape, translucent jelly texture, adorable face with simple dot eyes and small smile",
+      "notes": "Tier 1 - smallest piece, spawns first"
+    },
+    "buddy-bear-1": {
+      "size": 60,
+      "description": "red gummy bear candy with full teddy bear body, slightly squished bouncing pose, same kawaii face",
+      "notes": "Movement frame for buddy-bear"
+    },
+    "fruity-tutti": {
+      "size": 94,
+      "description": "colorful fruit roll-up candy spiral, rainbow swirl pattern, rolled up tube shape with cute face peeking out",
+      "notes": "Tier 2"
+    },
+    "fruity-tutti-1": {
+      "size": 94,
+      "description": "colorful fruit roll-up candy, rainbow swirl, slightly unrolled with cute face",
+      "notes": "Movement frame"
+    },
+    "mellow-marcy": {
+      "size": 130,
+      "description": "white fluffy marshmallow, soft puffy cylinder shape, slightly pink tinted, adorable kawaii face",
+      "notes": "Tier 3"
+    },
+    "mellow-marcy-1": {
+      "size": 130,
+      "description": "white fluffy marshmallow, soft puffy shape, squished down bouncy pose, same cute face",
+      "notes": "Movement frame"
+    },
+    "lady-pop": {
+      "size": 140,
+      "description": "round lollipop on white stick, pink and purple swirl pattern, classic spiral design with kawaii face in center",
+      "notes": "Tier 4"
+    },
+    "lady-pop-1": {
+      "size": 140,
+      "description": "round lollipop on white stick, pink and purple swirl, tilted angle, same cute face",
+      "notes": "Movement frame"
+    },
+    "coco-dude": {
+      "size": 180,
+      "description": "chocolate bar character with wrapper partially open, brown chocolate squares visible, gold foil wrapper, cute face on chocolate",
+      "notes": "Tier 5"
+    },
+    "coco-dude-1": {
+      "size": 180,
+      "description": "chocolate bar, brown squares, wrapper flapping in motion, bouncy happy pose",
+      "notes": "Movement frame"
+    },
+    "dodo-donut": {
+      "size": 230,
+      "description": "frosted donut with colorful sprinkles, pink strawberry icing, golden fried dough, kawaii face in the hole",
+      "notes": "Tier 6 - no movement frame"
+    },
+    "frosty-franny": {
+      "size": 260,
+      "description": "cupcake with swirled pink frosting, cherry on top, paper wrapper with hearts, adorable face on frosting",
+      "notes": "Tier 7"
+    },
+    "speedy-shake": {
+      "size": 320,
+      "description": "tall milkshake glass with whipped cream, pink strawberry shake, striped straw, cherry on top, cute face on glass",
+      "notes": "Tier 8"
+    },
+    "vanilla-ice-ice-baby": {
+      "size": 354,
+      "description": "bowl of vanilla ice cream with three scoops, waffle bowl, sprinkles on top, kawaii faces on each scoop",
+      "notes": "Tier 9"
+    },
+    "abby-apples": {
+      "size": 440,
+      "description": "slice of apple pie with lattice crust, vanilla ice cream scoop melting on top, cute face on the pie slice",
+      "notes": "Tier 10"
+    },
+    "big-ol-cake-a-rinos": {
+      "size": 520,
+      "description": "tall three tier wedding cake, white frosting, pink roses, gold decorations, fancy and elaborate, kawaii face on top tier",
+      "notes": "Tier 11 - CAP PIECE, largest"
+    }
+  }
+}
