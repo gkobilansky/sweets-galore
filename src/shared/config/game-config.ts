@@ -1,4 +1,17 @@
-import pieceSizes from './piece-sizes.json';
+interface PieceSizeConfig {
+  id: number;
+  name: string;
+  spriteSize: number;
+  radius?: number; // optional override for physics radius
+}
+
+interface PieceSizesConfig {
+  scale: number;
+  pieces: PieceSizeConfig[];
+}
+
+import pieceSizesRaw from './piece-sizes.json';
+const pieceSizes = pieceSizesRaw as PieceSizesConfig;
 
 export interface TierConfig {
   id: number;
@@ -11,9 +24,12 @@ export interface TierConfig {
 }
 
 // Calculate radius from sprite size using shared scale factor
+// If piece has explicit radius override, use that instead
 const getRadius = (id: number): number => {
   const piece = pieceSizes.pieces.find(p => p.id === id);
-  return piece ? Math.round(piece.spriteSize * pieceSizes.scale) : 30;
+  if (!piece) return 30;
+  if (piece.radius !== undefined) return piece.radius;
+  return Math.round(piece.spriteSize * pieceSizes.scale);
 };
 
 export interface GameConfig {
@@ -52,9 +68,9 @@ export const GAME_CONFIG: GameConfig = {
   
   // Physics settings
   gravity: 1.6,
-  restitution: 0.37, // moderate bounce
-  friction: 0.05,
-  airFriction: 0.02,
+  restitution: 0.55, // squishy bounce
+  friction: 0.03,
+  airFriction: 0.015,
   maxBodies: 120,
   
   // Game mechanics
