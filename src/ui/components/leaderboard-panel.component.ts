@@ -3,14 +3,14 @@ import { connectivityStore, type ConnectivityState } from '../../shared/state/co
 
 interface LeaderboardPanelOptions {
   containerId?: string;
-  highlightNickname?: string | null;
+  highlightDisplayName?: string | null;
   highlightUserId?: string | null;
 }
 
 export class LeaderboardPanelComponent {
   private readonly containerId: string;
-  private highlightNickname: string | null;
-  private highlightNicknameNormalized: string | null;
+  private highlightDisplayName: string | null;
+  private highlightDisplayNameNormalized: string | null;
   private highlightUserId: string | null;
   private currentController: AbortController | null = null;
   private countdownElement: HTMLElement | null = null;
@@ -20,8 +20,8 @@ export class LeaderboardPanelComponent {
 
   constructor(options: LeaderboardPanelOptions = {}) {
     this.containerId = options.containerId ?? 'leaderboard-list';
-    this.highlightNickname = options.highlightNickname?.trim() ?? null;
-    this.highlightNicknameNormalized = this.highlightNickname?.toLowerCase() ?? null;
+    this.highlightDisplayName = options.highlightDisplayName?.trim() ?? null;
+    this.highlightDisplayNameNormalized = this.highlightDisplayName?.toLowerCase() ?? null;
     this.highlightUserId = options.highlightUserId?.trim() ?? null;
     if (typeof window !== 'undefined') {
       // Defer until next frame to ensure heading exists
@@ -32,8 +32,8 @@ export class LeaderboardPanelComponent {
   }
 
   public setHighlightNickname(value: string | null): void {
-    this.highlightNickname = value?.trim() || null;
-    this.highlightNicknameNormalized = this.highlightNickname?.toLowerCase() ?? null;
+    this.highlightDisplayName = value?.trim() || null;
+    this.highlightDisplayNameNormalized = this.highlightDisplayName?.toLowerCase() ?? null;
   }
 
   public setHighlightUserId(value: string | null): void {
@@ -44,7 +44,7 @@ export class LeaderboardPanelComponent {
     await this.refresh();
   }
 
-  public async refresh(options: { week?: string } = {}): Promise<void> {
+  public async refresh(options: { limit?: number } = {}): Promise<void> {
     const container = this.getContainer();
     if (!container) {
       return;
@@ -63,7 +63,7 @@ export class LeaderboardPanelComponent {
     this.renderLoading(container);
 
     try {
-      const payload = await fetchLeaderboard({ week: options.week, signal: controller.signal });
+      const payload = await fetchLeaderboard({ limit: options.limit, signal: controller.signal });
       if (controller.signal.aborted) {
         return;
       }
@@ -133,7 +133,7 @@ export class LeaderboardPanelComponent {
 
       const name = document.createElement('span');
       name.className = 'leaderboard-name';
-      name.textContent = entry.nickname || 'Mystery Player';
+      name.textContent = entry.displayName || 'Mystery Player';
 
       const score = document.createElement('span');
       score.className = 'leaderboard-score';
@@ -154,7 +154,7 @@ export class LeaderboardPanelComponent {
 
     const empty = document.createElement('div');
     empty.className = 'leaderboard-empty';
-    empty.textContent = 'No submissions yet. Be the first to set a record this week.';
+    empty.textContent = 'No scores yet. Be the first to set a record!';
 
     container.appendChild(empty);
   }
@@ -174,10 +174,10 @@ export class LeaderboardPanelComponent {
     if (this.highlightUserId && entry.userId && entry.userId === this.highlightUserId) {
       return true;
     }
-    if (!this.highlightNicknameNormalized) {
+    if (!this.highlightDisplayNameNormalized || !entry.displayName) {
       return false;
     }
-    return entry.nickname.trim().toLowerCase() === this.highlightNicknameNormalized;
+    return entry.displayName.trim().toLowerCase() === this.highlightDisplayNameNormalized;
   }
 
   private formatScore(value: number): string {

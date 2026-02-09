@@ -6,17 +6,21 @@ export interface ScoreSubmissionPayload {
   nickname: string;
   email?: string;
   score: number;
+  maxTierReached?: number;
+  piecesMerged?: number;
+  gameDurationSeconds?: number;
 }
 
 export interface ScoreSubmissionResult {
   placement: number;
-  isoWeek: string;
   entry: {
     id: string;
-    userId?: string | null;
-    nickname: string;
+    userId: string;
+    displayName: string | null;
     score: number;
-    isoWeek: string;
+    maxTierReached: number | null;
+    piecesMerged: number | null;
+    gameDurationSeconds: number | null;
     createdAt: string;
   };
 }
@@ -331,7 +335,7 @@ export class GameOverOverlayComponent extends PixiContainer {
         return;
       }
       this.persistProfile(payload);
-      this.setSubmissionState('success', `Nice! You're #${Math.max(1, result.placement)} this week.`);
+      this.setSubmissionState('success', `Nice! You're ranked #${Math.max(1, result.placement)}!`);
       this.options.onSubmissionSuccess?.(result, payload);
     } catch (error) {
       if (controller.signal.aborted) {

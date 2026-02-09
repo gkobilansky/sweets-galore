@@ -45,13 +45,14 @@ describe('submitScore', () => {
   it('submits payload and normalizes response', async () => {
     const payload: SubmitScoreResponse = {
       placement: 2,
-      isoWeek: '2025-W07',
       entry: {
         id: 'abc',
         userId: 'user-1',
-        nickname: 'Tester',
+        displayName: 'Tester',
         score: 1234,
-        isoWeek: '2025-W07',
+        maxTierReached: 5,
+        piecesMerged: 42,
+        gameDurationSeconds: 180,
         createdAt: '2025-02-13T00:00:00.000Z'
       }
     };
@@ -59,7 +60,14 @@ describe('submitScore', () => {
     const fetchMock = vi.fn().mockResolvedValue(mockResponse({ jsonBody: payload }));
     globalThis.fetch = fetchMock as unknown as typeof globalThis.fetch;
 
-    const result = await submitScore({ nickname: ' Tester ', email: '  user@example.com ', score: 1234 });
+    const result = await submitScore({
+      nickname: ' Tester ',
+      email: '  user@example.com ',
+      score: 1234,
+      maxTierReached: 5,
+      piecesMerged: 42,
+      gameDurationSeconds: 180
+    });
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
     const [, init] = fetchMock.mock.calls[0];
@@ -67,7 +75,10 @@ describe('submitScore', () => {
     expect(init?.body).toBe(JSON.stringify({
       nickname: 'Tester',
       email: 'user@example.com',
-      score: 1234
+      score: 1234,
+      maxTierReached: 5,
+      piecesMerged: 42,
+      gameDurationSeconds: 180
     }));
     expect(result).toEqual(payload);
   });

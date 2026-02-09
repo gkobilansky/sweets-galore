@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { sql } from '@vercel/postgres';
 import { z } from 'zod';
-import { DatabaseConfigError, ensureScoresTable, normalizeEmail } from './_db.js';
+import { DatabaseConfigError, ensureTablesExist, normalizeEmail } from './_db.js';
 import { JsonBodyParseError, readJsonBody, sendJson } from './_http.js';
 
 const UserPayloadSchema = z.object({
@@ -9,7 +9,7 @@ const UserPayloadSchema = z.object({
     (value) => (typeof value === 'string' ? value.trim() : value),
     z.string().email('Email must be valid').max(254, 'Email must be 254 characters or fewer')
   ),
-  nickname: z.preprocess(
+  displayName: z.preprocess(
     (value) => (typeof value === 'string' ? value.trim() : value),
     z.string().min(2).max(24)
   ).optional()
@@ -47,21 +47,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   }
 
   try {
-    await ensureScoresTable();
+    await ensureTablesExist();
     const normalizedEmail = normalizeEmail(payload.email);
     if (!normalizedEmail) {
       sendJson(res, 400, { error: 'Email is required' });
       return;
     }
 
-    const result = await sql<{ id: string; nickname: string | null }>`
-      INSERT INTO users (email, nickname)
-      VALUES (${normalizedEmail}, ${payload.nickname ?? null})
+    const result = await sql<{ id: string; display_name: string | null }>`
+      INSERT INTO sg_users (email, display_name)
+      VALUES (${normalizedEmail}, ${payload.displayName ?? null})
       ON CONFLICT (email)
       DO UPDATE SET
-        nickname = COALESCE(EXCLUDED.nickname, users.nickname),
+        display_name = COALESCE(EXCLUDED.display_name, sg_users.display_name),
         updated_at = NOW()
-      RETURNING id, nickname;
+      RETURNING id, display_name;
     `;
 
     const record = result.rows[0];
@@ -69,7 +69,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     sendJson(res, 200, {
       id: record.id,
       email: normalizedEmail,
-      nickname: record.nickname ?? null
+      displayName: record.display_name ?? null
     });
   } catch (error) {
     if (error instanceof DatabaseConfigError) {

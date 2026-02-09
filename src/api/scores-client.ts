@@ -2,17 +2,21 @@ export interface SubmitScorePayload {
   nickname: string;
   score: number;
   email?: string;
+  maxTierReached?: number;
+  piecesMerged?: number;
+  gameDurationSeconds?: number;
 }
 
 export interface SubmitScoreResponse {
   placement: number;
-  isoWeek: string;
   entry: {
     id: string;
-    userId?: string | null;
-    nickname: string;
+    userId: string;
+    displayName: string | null;
     score: number;
-    isoWeek: string;
+    maxTierReached: number | null;
+    piecesMerged: number | null;
+    gameDurationSeconds: number | null;
     createdAt: string;
   };
 }
@@ -49,7 +53,10 @@ export async function submitScore(
       body: JSON.stringify({
         nickname,
         email: email?.length ? email : undefined,
-        score: payload.score
+        score: payload.score,
+        maxTierReached: payload.maxTierReached,
+        piecesMerged: payload.piecesMerged,
+        gameDurationSeconds: payload.gameDurationSeconds
       }),
       signal: options.signal
     });
@@ -83,14 +90,15 @@ export async function submitScore(
 
   return {
     placement: Number(body?.placement ?? 0),
-    isoWeek: typeof body?.isoWeek === 'string' ? body.isoWeek : '',
-      entry: {
-        id: String(body?.entry?.id ?? ''),
-        userId: typeof body?.entry?.userId === 'string' && body.entry.userId.length ? String(body.entry.userId) : null,
-        nickname: String(body?.entry?.nickname ?? nickname),
-        score: Number(body?.entry?.score ?? payload.score),
-        isoWeek: typeof body?.entry?.isoWeek === 'string' ? body.entry.isoWeek : '',
-        createdAt: typeof body?.entry?.createdAt === 'string' ? body.entry.createdAt : ''
-      }
+    entry: {
+      id: String(body?.entry?.id ?? ''),
+      userId: String(body?.entry?.userId ?? ''),
+      displayName: typeof body?.entry?.displayName === 'string' ? body.entry.displayName : null,
+      score: Number(body?.entry?.score ?? payload.score),
+      maxTierReached: typeof body?.entry?.maxTierReached === 'number' ? body.entry.maxTierReached : null,
+      piecesMerged: typeof body?.entry?.piecesMerged === 'number' ? body.entry.piecesMerged : null,
+      gameDurationSeconds: typeof body?.entry?.gameDurationSeconds === 'number' ? body.entry.gameDurationSeconds : null,
+      createdAt: typeof body?.entry?.createdAt === 'string' ? body.entry.createdAt : ''
+    }
   };
 }

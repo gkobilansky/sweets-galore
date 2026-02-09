@@ -1,18 +1,21 @@
 export interface LeaderboardEntry {
   rank: number;
-  nickname: string;
+  id: string;
+  displayName: string | null;
   score: number;
+  maxTierReached: number | null;
+  piecesMerged: number | null;
+  gameDurationSeconds: number | null;
   createdAt: string;
-  userId: string | null;
+  userId: string;
 }
 
 export interface LeaderboardResponse {
-  isoWeek: string;
   entries: LeaderboardEntry[];
 }
 
 export interface FetchLeaderboardOptions {
-  week?: string;
+  limit?: number;
   signal?: AbortSignal;
 }
 
@@ -20,8 +23,8 @@ const LEADERBOARD_ENDPOINT = '/api/leaderboard';
 
 export async function fetchLeaderboard(options: FetchLeaderboardOptions = {}): Promise<LeaderboardResponse> {
   const params = new URLSearchParams();
-  if (options.week) {
-    params.set('week', options.week);
+  if (options.limit) {
+    params.set('limit', String(options.limit));
   }
 
   const query = params.toString();
@@ -61,15 +64,16 @@ export async function fetchLeaderboard(options: FetchLeaderboardOptions = {}): P
   const entries: LeaderboardEntry[] = Array.isArray(payload?.entries)
     ? payload.entries.map((entry: any) => ({
         rank: Number(entry?.rank ?? 0),
-        nickname: String(entry?.nickname ?? 'Mystery Player'),
+        id: String(entry?.id ?? ''),
+        displayName: typeof entry?.displayName === 'string' ? entry.displayName : null,
         score: Number(entry?.score ?? 0),
+        maxTierReached: typeof entry?.maxTierReached === 'number' ? entry.maxTierReached : null,
+        piecesMerged: typeof entry?.piecesMerged === 'number' ? entry.piecesMerged : null,
+        gameDurationSeconds: typeof entry?.gameDurationSeconds === 'number' ? entry.gameDurationSeconds : null,
         createdAt: String(entry?.createdAt ?? ''),
-        userId: typeof entry?.userId === 'string' && entry.userId.length ? String(entry.userId) : null
+        userId: String(entry?.userId ?? '')
       }))
     : [];
 
-  return {
-    isoWeek: typeof payload?.isoWeek === 'string' ? payload.isoWeek : '',
-    entries
-  };
+  return { entries };
 }

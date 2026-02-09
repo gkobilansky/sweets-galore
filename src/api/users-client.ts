@@ -1,12 +1,12 @@
 export interface UserContactPayload {
   email: string;
-  nickname?: string;
+  displayName?: string;
 }
 
 export interface UserContactResponse {
   id: string;
   email: string;
-  nickname: string | null;
+  displayName: string | null;
 }
 
 export interface UserContactOptions {
@@ -24,7 +24,7 @@ export async function submitUserContact(
     throw new Error('Email is required');
   }
 
-  const nickname = payload.nickname?.trim();
+  const displayName = payload.displayName?.trim();
 
   let response: Response;
   try {
@@ -36,7 +36,7 @@ export async function submitUserContact(
       },
       body: JSON.stringify({
         email,
-        ...(nickname ? { nickname } : {})
+        ...(displayName ? { displayName } : {})
       }),
       signal: options.signal
     });
@@ -71,6 +71,6 @@ export async function submitUserContact(
   return {
     id: String(body?.id ?? ''),
     email: String(body?.email ?? email),
-    nickname: typeof body?.nickname === 'string' && body.nickname.length ? String(body.nickname) : null
+    displayName: typeof body?.displayName === 'string' && body.displayName.length ? String(body.displayName) : null
   };
 }

@@ -2,7 +2,7 @@ import { sql } from '@vercel/postgres';
 
 const ISO_WEEK_PATTERN = /^\d{4}-W\d{2}$/;
 const REQUIRED_DB_ENV_VARS = ['POSTGRES_URL'];
-let schemaPromise: Promise<void> | null = null;
+let schemaVerified = false;
 
 export const ISO_WEEK_KEY_LENGTH = 7 + 1; // e.g. 2025-W02
 
@@ -20,64 +20,29 @@ export function assertDatabaseConfig(): void {
   }
 }
 
-export async function ensureScoresTable(): Promise<void> {
+export async function ensureTablesExist(): Promise<void> {
   assertDatabaseConfig();
-  if (!schemaPromise) {
-    schemaPromise = (async () => {
-      await sql`CREATE EXTENSION IF NOT EXISTS "pgcrypto";`;
-      await sql`
-        CREATE TABLE IF NOT EXISTS users (
-          id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-          email TEXT UNIQUE,
-          nickname TEXT,
-          created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-          updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-        );
-      `;
-      await sql`
-        CREATE TABLE IF NOT EXISTS scores (
-          id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-          user_id UUID REFERENCES users(id) ON DELETE SET NULL,
-          nickname TEXT NOT NULL,
-          email TEXT,
-          score INTEGER NOT NULL CHECK (score >= 0),
-          iso_week CHAR(8) NOT NULL,
-          created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-        );
-      `;
-      await sql`
-        ALTER TABLE scores
-        ADD COLUMN IF NOT EXISTS user_id UUID;
-      `;
-      await sql`
-        DO $$
-        BEGIN
-          IF NOT EXISTS (
-            SELECT 1 FROM pg_constraint WHERE conname = 'scores_user_id_fkey'
-          ) THEN
-            ALTER TABLE scores
-            ADD CONSTRAINT scores_user_id_fkey
-            FOREIGN KEY (user_id)
-            REFERENCES users(id)
-            ON DELETE SET NULL;
-          END IF;
-        END $$;
-      `;
-      await sql`
-        CREATE INDEX IF NOT EXISTS scores_iso_week_score_idx
-        ON scores (iso_week, score DESC, created_at ASC);
-      `;
-      await sql`
-        CREATE INDEX IF NOT EXISTS users_created_at_idx
-        ON users (created_at);
-      `;
-    })().catch((error) => {
-      schemaPromise = null;
-      throw error;
-    });
+  if (schemaVerified) return;
+
+  // Verify sg_users and sg_scores tables exist (created via db/schema.sql)
+  const result = await sql`
+    SELECT table_name
+    FROM information_schema.tables
+    WHERE table_schema = 'public'
+    AND table_name IN ('sg_users', 'sg_scores');
+  `;
+
+  if (result.rows.length < 2) {
+    throw new DatabaseConfigError(
+      'Database tables sg_users and sg_scores not found. Run db/schema.sql to create them.'
+    );
   }
-  return schemaPromise;
+
+  schemaVerified = true;
 }
+
+// Legacy alias for backward compatibility
+export const ensureScoresTable = ensureTablesExist;
 
 export function getIsoWeekId(date: Date = new Date()): string {
   const utc = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));

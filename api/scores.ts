@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { sql } from '@vercel/postgres';
 import { z } from 'zod';
-import { DatabaseConfigError, ensureScoresTable, getIsoWeekId, normalizeEmail } from './_db.js';
+import { DatabaseConfigError, ensureTablesExist, normalizeEmail } from './_db.js';
 import { JsonBodyParseError, readJsonBody, sendJson } from './_http.js';
 
 const ScorePayloadSchema = z.object({
@@ -25,6 +25,18 @@ const ScorePayloadSchema = z.object({
       return trimmed.length ? trimmed : undefined;
     },
     z.string().email('Email must be valid').max(254, 'Email must be 254 characters or fewer')
+  ).optional(),
+  maxTierReached: z.preprocess(
+    (value) => (typeof value === 'string' ? Number(value) : value),
+    z.number().int().min(1).max(11)
+  ).optional(),
+  piecesMerged: z.preprocess(
+    (value) => (typeof value === 'string' ? Number(value) : value),
+    z.number().int().min(0)
+  ).optional(),
+  gameDurationSeconds: z.preprocess(
+    (value) => (typeof value === 'string' ? Number(value) : value),
+    z.number().int().min(0)
   ).optional()
 });
 
@@ -32,28 +44,29 @@ type ScorePayload = z.infer<typeof ScorePayloadSchema>;
 
 interface DbUserRow {
   id: string;
-  nickname: string | null;
+  display_name: string | null;
 }
 
 async function ensureUserRecord(payload: ScorePayload): Promise<DbUserRow> {
   const normalizedEmail = normalizeEmail(payload.email);
   if (normalizedEmail) {
     const result = await sql<DbUserRow>`
-      INSERT INTO users (email, nickname)
+      INSERT INTO sg_users (email, display_name)
       VALUES (${normalizedEmail}, ${payload.nickname})
       ON CONFLICT (email)
       DO UPDATE SET
-        nickname = COALESCE(EXCLUDED.nickname, users.nickname),
+        display_name = COALESCE(EXCLUDED.display_name, sg_users.display_name),
         updated_at = NOW()
-      RETURNING id, nickname;
+      RETURNING id, display_name;
     `;
     return result.rows[0];
   }
 
+  // For anonymous users, create a record without email
   const userResult = await sql<DbUserRow>`
-    INSERT INTO users (nickname)
-    VALUES (${payload.nickname})
-    RETURNING id, nickname;
+    INSERT INTO sg_users (email, display_name)
+    VALUES (${`anon_${Date.now()}_${Math.random().toString(36).slice(2, 8)}@anonymous.local`}, ${payload.nickname})
+    RETURNING id, display_name;
   `;
   return userResult.rows[0];
 }
@@ -88,41 +101,50 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   }
 
   try {
-    await ensureScoresTable();
-    const isoWeek = getIsoWeekId();
+    await ensureTablesExist();
     const user = await ensureUserRecord(payload);
-    const normalizedEmail = normalizeEmail(payload.email);
+
     const result = await sql<{
       id: string;
-      nickname: string;
-      user_id: string | null;
+      user_id: string;
       score: number;
-      iso_week: string;
+      max_tier_reached: number | null;
+      pieces_merged: number | null;
+      game_duration_seconds: number | null;
       created_at: string;
     }>`
-      INSERT INTO scores (user_id, nickname, email, score, iso_week)
-      VALUES (${user.id}, ${payload.nickname}, ${normalizedEmail ?? null}, ${payload.score}, ${isoWeek})
-      RETURNING id, nickname, user_id, score, iso_week, created_at;
+      INSERT INTO sg_scores (user_id, score, max_tier_reached, pieces_merged, game_duration_seconds)
+      VALUES (
+        ${user.id},
+        ${payload.score},
+        ${payload.maxTierReached ?? null},
+        ${payload.piecesMerged ?? null},
+        ${payload.gameDurationSeconds ?? null}
+      )
+      RETURNING id, user_id, score, max_tier_reached, pieces_merged, game_duration_seconds, created_at;
     `;
 
     const entry = result.rows[0];
+
+    // Calculate placement (rank) based on all-time scores
     const placementResult = await sql<{ higher: number }>`
-      SELECT COUNT(*)::int AS higher
-      FROM scores
-      WHERE iso_week = ${isoWeek} AND score > ${payload.score};
+      SELECT COUNT(DISTINCT user_id)::int AS higher
+      FROM sg_scores
+      WHERE score > ${payload.score};
     `;
 
     const placement = (placementResult.rows[0]?.higher ?? 0) + 1;
 
     sendJson(res, 201, {
       placement,
-      isoWeek,
       entry: {
         id: entry.id,
-        nickname: entry.nickname,
         userId: entry.user_id,
+        displayName: user.display_name,
         score: entry.score,
-        isoWeek: entry.iso_week,
+        maxTierReached: entry.max_tier_reached,
+        piecesMerged: entry.pieces_merged,
+        gameDurationSeconds: entry.game_duration_seconds,
         createdAt: entry.created_at
       }
     });
