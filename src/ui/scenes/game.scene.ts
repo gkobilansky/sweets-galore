@@ -45,8 +45,10 @@ export class GameScene extends PixiContainer implements SceneInterface {
     private capPieceCallouts: { node: PixiText; life: number; initialLife: number }[] = [];
     private screenFlashes: { node: PixiGraphics; life: number; initialLife: number }[] = [];
     private pieceMotionState: Map<string, boolean> = new Map();
+    private pieceMotionLastChange: Map<string, number> = new Map();
     private readonly motionVerticalThreshold: number = 0.35;
     private readonly motionSpeedThreshold: number = 0.55;
+    private readonly motionStateMinInterval: number = 300; // ms between expression changes
     private gameOverOverlay?: GameOverOverlayComponent;
     private readonly handleScoreSubmission = (payload: ScoreSubmissionPayload, options?: { signal?: AbortSignal }): Promise<ScoreSubmissionResult> => {
         return submitScore(payload, { signal: options?.signal });
@@ -245,6 +247,7 @@ export class GameScene extends PixiContainer implements SceneInterface {
             this.pieceSprites.delete(piece.id);
         }
         this.pieceMotionState.delete(piece.id);
+        this.pieceMotionLastChange.delete(piece.id);
     }
     
     private handleMergeComplete(newPiece: GamePiece, mergedTier: TierConfig, score: number, _multiplier: number): void {
@@ -442,7 +445,16 @@ export class GameScene extends PixiContainer implements SceneInterface {
         if (previous === isMoving) {
             return;
         }
+
+        // Rate limit expression changes to prevent flickering when jiggling
+        const now = Date.now();
+        const lastChange = this.pieceMotionLastChange.get(piece.id) ?? 0;
+        if (now - lastChange < this.motionStateMinInterval) {
+            return;
+        }
+
         this.pieceMotionState.set(piece.id, isMoving);
+        this.pieceMotionLastChange.set(piece.id, now);
         setPieceSpriteMovementState(sprite, isMoving);
     }
 
