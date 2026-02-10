@@ -104,7 +104,7 @@ export const GAME_CONFIG: GameConfig = {
   dropRateLimit: 3, // 10 drops per 10 seconds
   
   // Tier system
-  allowedSpawnTierIds: [6,7,8,9,10],
+  allowedSpawnTierIds: [1,2,3,4,5],
   // Radii derived from piece-sizes.json (spriteSize * scale)
   tiers: [
     {
