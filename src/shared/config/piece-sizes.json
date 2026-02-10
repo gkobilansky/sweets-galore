@@ -1,16 +1,17 @@
 {
-  "scale": 0.20,
+  "textureSize": 600,
+  "showRadiusBorder": false,
   "pieces": [
-    { "id": 1, "name": "buddy-bear", "spriteSize": 125 },
-    { "id": 2, "name": "fruity-tutti", "spriteSize": 144 },
-    { "id": 3, "name": "mellow-marcy", "spriteSize": 163 },
-    { "id": 4, "name": "lady-pop", "spriteSize": 181 },
-    { "id": 5, "name": "coco-dude", "spriteSize": 199 },
-    { "id": 6, "name": "dodo-donut", "spriteSize": 217 },
-    { "id": 7, "name": "frosty-franny", "spriteSize": 234, "radius": 40 },
-    { "id": 8, "name": "speedy-shake", "spriteSize": 250, "radius": 42 },
-    { "id": 9, "name": "vanilla-ice-ice-baby", "spriteSize": 265 },
-    { "id": 10, "name": "abby-apples", "spriteSize": 278 },
-    { "id": 11, "name": "big-ol-cake-a-rinos", "spriteSize": 289 }
+    { "id": 1, "name": "buddy-bear", "displaySize": 50 },
+    { "id": 2, "name": "fruity-tutti", "displaySize": 58, "radiusRatio": 0.9 },
+    { "id": 3, "name": "mellow-marcy", "displaySize": 66 },
+    { "id": 4, "name": "lady-pop", "displaySize": 70 },
+    { "id": 5, "name": "coco-dude", "displaySize": 78, "radiusRatio": 0.9 },
+    { "id": 6, "name": "dodo-donut", "displaySize":82 },
+    { "id": 7, "name": "frosty-franny", "displaySize": 105, "radiusRatio": 0.8 },
+  { "id": 8, "name": "speedy-shake", "displaySize": 115, "radiusRatio": 0.7 },
+    { "id": 9, "name": "vanilla-ice-ice-baby", "displaySize": 125, "radiusRatio": 0.95 },
+    { "id": 10, "name": "abby-apples", "displaySize": 140, "radiusRatio": 0.9 },
+    { "id": 11, "name": "big-ol-cake-a-rinos", "displaySize": 180, "radiusRatio": 0.8 }
   ]
 }

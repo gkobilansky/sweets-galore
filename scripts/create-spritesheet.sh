@@ -15,21 +15,23 @@ OUTPUT_DIR="public/atlases/sweets-pieces"
 TEMP_DIR="$RAW_DIR/resized"
 SIZES_JSON="src/shared/config/piece-sizes.json"
 
-# Build PIECES array from piece-sizes.json (sorted largest to smallest)
-# Each piece gets a "-1" variant for animation frames
+# Get global texture size from piece-sizes.json
+TEXTURE_SIZE=$(grep -o '"textureSize": *[0-9]*' "$SIZES_JSON" | sed 's/"textureSize": *//')
+
+# Build PIECES array from piece-sizes.json
+# All pieces use the same texture size, sorted by id descending for layout
 PIECES=()
-while IFS= read -r line; do
-  name=$(echo "$line" | cut -d: -f1)
-  size=$(echo "$line" | cut -d: -f2)
-  PIECES+=("$name:$size")
+while IFS= read -r name; do
+  PIECES+=("$name:$TEXTURE_SIZE")
   # Add -1 variant for pieces that have animation frames
-  PIECES+=("$name-1:$size")
+  PIECES+=("$name-1:$TEXTURE_SIZE")
 done < <(
-  # Parse JSON and sort by size descending
-  grep -o '"name": *"[^"]*"\|"spriteSize": *[0-9]*' "$SIZES_JSON" | \
+  # Parse JSON and get piece names, sorted by id descending
+  grep -o '"name": *"[^"]*"\|"id": *[0-9]*' "$SIZES_JSON" | \
   paste - - | \
-  sed 's/"name": *"\([^"]*\)".*"spriteSize": *\([0-9]*\)/\1:\2/' | \
-  sort -t: -k2 -rn
+  sed 's/"id": *\([0-9]*\).*"name": *"\([^"]*\)"/\1:\2/' | \
+  sort -t: -k1 -rn | \
+  cut -d: -f2
 )
 
 # Check for ImageMagick

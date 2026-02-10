@@ -1,12 +1,13 @@
 interface PieceSizeConfig {
   id: number;
   name: string;
-  spriteSize: number;
-  radius?: number; // optional override for physics radius
+  displaySize: number;  // visual size on board (bigger per tier)
+  radiusRatio?: number; // physics radius = displaySize * radiusRatio / 2 (default 1.0)
 }
 
 interface PieceSizesConfig {
-  scale: number;
+  textureSize: number;  // texture resolution in spritesheet (same for all, high res)
+  showRadiusBorder?: boolean;  // debug: show circle outline for physics radius
   pieces: PieceSizeConfig[];
 }
 
@@ -23,13 +24,29 @@ export interface TierConfig {
   cap?: boolean;
 }
 
-// Calculate radius from sprite size using shared scale factor
-// If piece has explicit radius override, use that instead
+// Calculate radius from displaySize
+// radiusRatio adjusts physics sphere relative to visual size (default 1.0)
 const getRadius = (id: number): number => {
   const piece = pieceSizes.pieces.find(p => p.id === id);
   if (!piece) return 30;
-  if (piece.radius !== undefined) return piece.radius;
-  return Math.round(piece.spriteSize * pieceSizes.scale);
+  const ratio = piece.radiusRatio ?? 1.0;
+  return Math.round((piece.displaySize / 2) * ratio);
+};
+
+// Get texture size for spritesheet generation (same for all pieces)
+export const getTextureSize = (): number => {
+  return pieceSizes.textureSize ?? 300;
+};
+
+// Debug setting: show radius border around pieces
+export const shouldShowRadiusBorder = (): boolean => {
+  return pieceSizes.showRadiusBorder ?? false;
+};
+
+// Get display size for in-game rendering
+export const getDisplaySize = (id: number): number => {
+  const piece = pieceSizes.pieces.find(p => p.id === id);
+  return piece?.displaySize ?? 60;
 };
 
 export interface GameConfig {
@@ -87,7 +104,7 @@ export const GAME_CONFIG: GameConfig = {
   dropRateLimit: 3, // 10 drops per 10 seconds
   
   // Tier system
-  allowedSpawnTierIds: [1,2,3,4,5,6,7],
+  allowedSpawnTierIds: [6,7,8,9,10],
   // Radii derived from piece-sizes.json (spriteSize * scale)
   tiers: [
     {

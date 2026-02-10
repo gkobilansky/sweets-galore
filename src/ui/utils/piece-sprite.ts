@@ -1,7 +1,7 @@
 import type { Spritesheet } from 'pixi.js';
-import { PixiAssets, PixiGraphics, PixiSprite, PixiTexture } from '../../plugins/engine';
+import { PixiAssets, PixiContainer, PixiGraphics, PixiSprite, PixiTexture } from '../../plugins/engine';
 import { Manager } from '../../entities/manager';
-import type { TierConfig } from '../../shared/config/game-config';
+import { getDisplaySize, shouldShowRadiusBorder, type TierConfig } from '../../shared/config/game-config';
 
 interface PieceSpriteOptions {
   targetDiameter?: number;
@@ -20,7 +20,8 @@ const fallbackTextureCache: Map<string, PixiTexture> = new Map();
 let cachedSpritesheet: Spritesheet | null = null;
 
 export function createPieceSprite(tier: TierConfig, options: PieceSpriteOptions = {}): PixiSprite {
-  const targetDiameter = options.targetDiameter ?? tier.radius * 2;
+  // Use displaySize for visual rendering (independent of physics radius)
+  const targetDiameter = options.targetDiameter ?? getDisplaySize(tier.id);
   const textures = getTierTextures(tier);
 
   if (textures.length > 0) {
@@ -33,10 +34,41 @@ export function createPieceSprite(tier: TierConfig, options: PieceSpriteOptions 
     spriteWithFrames.pieceActiveFrameIndex = findActiveFrameIndex(tier.frames);
 
     setSpriteFrameIndex(spriteWithFrames, 0);
+
+    // Debug: show physics radius border
+    if (shouldShowRadiusBorder()) {
+      return wrapWithRadiusBorder(sprite, tier);
+    }
+
     return sprite;
   }
 
   return createFallbackSprite(tier, targetDiameter / 2);
+}
+
+function wrapWithRadiusBorder(sprite: PixiSprite, tier: TierConfig): PixiSprite {
+  const container = new PixiContainer();
+
+  // Draw circle showing physics radius
+  const border = new PixiGraphics();
+  border.circle(0, 0, tier.radius);
+  border.stroke({ color: tier.color, alpha: 0.7, width: 2 });
+
+  container.addChild(border);
+  container.addChild(sprite);
+
+  // Copy sprite properties to container for compatibility
+  const spriteWithFrames = sprite as PieceSpriteWithFrames;
+  const containerAsSprite = container as unknown as PieceSpriteWithFrames;
+  containerAsSprite.pieceFrameTextures = spriteWithFrames.pieceFrameTextures;
+  containerAsSprite.pieceTargetDiameter = spriteWithFrames.pieceTargetDiameter;
+  containerAsSprite.pieceActiveFrameIndex = spriteWithFrames.pieceActiveFrameIndex;
+  containerAsSprite.pieceFrameIndex = spriteWithFrames.pieceFrameIndex;
+
+  // Store reference to the actual sprite for frame changes
+  (container as any)._innerSprite = sprite;
+
+  return container as unknown as PixiSprite;
 }
 
 function getSpritesheet(): Spritesheet | null {
@@ -127,19 +159,24 @@ function createFallbackSprite(tier: TierConfig, radius: number): PixiSprite {
 }
 
 function setSpriteFrameIndex(sprite: PieceSpriteWithFrames, frameIndex: number): void {
-  const textures = sprite.pieceFrameTextures;
+  // Handle wrapped container case (when radius border is shown)
+  const innerSprite = (sprite as any)._innerSprite as PieceSpriteWithFrames | undefined;
+  const targetSprite = innerSprite ?? sprite;
+
+  const textures = targetSprite.pieceFrameTextures ?? sprite.pieceFrameTextures;
   if (!textures?.length) {
     return;
   }
 
   const clamped = Math.max(0, Math.min(frameIndex, textures.length - 1));
-  if (sprite.pieceFrameIndex === clamped && sprite.texture === textures[clamped]) {
+  if (targetSprite.pieceFrameIndex === clamped && targetSprite.texture === textures[clamped]) {
     return;
   }
 
+  targetSprite.pieceFrameIndex = clamped;
   sprite.pieceFrameIndex = clamped;
-  sprite.texture = textures[clamped];
-  applyScaleForTexture(sprite, textures[clamped]);
+  targetSprite.texture = textures[clamped];
+  applyScaleForTexture(targetSprite, textures[clamped]);
 }
 
 function applyScaleForTexture(sprite: PieceSpriteWithFrames, texture: PixiTexture): void {
