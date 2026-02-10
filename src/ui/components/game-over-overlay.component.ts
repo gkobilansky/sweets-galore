@@ -1,10 +1,10 @@
 import { PixiContainer, PixiGraphics, PixiText } from '../../plugins/engine';
 import { ButtonSprite } from '../sprites';
 import { connectivityStore, type ConnectivityState } from '../../shared/state/connectivity';
+import { validateNickname } from '../../shared/utils/profanity-filter';
 
 export interface ScoreSubmissionPayload {
   nickname: string;
-  email?: string;
   score: number;
   maxTierReached?: number;
   piecesMerged?: number;
@@ -42,7 +42,6 @@ type SubmissionState = 'idle' | 'submitting' | 'success' | 'error' | 'skipped';
 
 interface StoredProfile {
   nickname: string;
-  email?: string;
 }
 
 const PLAYER_PROFILE_KEY = 'sweets-galore-player-profile';
@@ -59,7 +58,6 @@ export class GameOverOverlayComponent extends PixiContainer {
   private formHost: HTMLDivElement | null = null;
   private formElement: HTMLFormElement | null = null;
   private nicknameInput: HTMLInputElement | null = null;
-  private emailInput: HTMLInputElement | null = null;
   private submitButton: HTMLButtonElement | null = null;
   private skipButton: HTMLButtonElement | null = null;
   private statusText: HTMLParagraphElement | null = null;
@@ -189,7 +187,7 @@ export class GameOverOverlayComponent extends PixiContainer {
 
     const description = document.createElement('p');
     description.className = 'game-over-form__description';
-    description.textContent = 'Share your nickname for the weekly top five. Email is optional and only used for prizes.';
+    description.textContent = 'Share your nickname for the weekly top five.';
 
     const form = document.createElement('form');
     form.className = 'game-over-form__fields';
@@ -207,17 +205,6 @@ export class GameOverOverlayComponent extends PixiContainer {
     nicknameInput.maxLength = 24;
     nicknameInput.placeholder = 'Sweet Champion';
     nicknameInput.autocomplete = 'username';
-
-    const emailLabel = document.createElement('label');
-    emailLabel.textContent = 'Email (optional)';
-    emailLabel.htmlFor = 'game-over-email';
-
-    const emailInput = document.createElement('input');
-    emailInput.id = 'game-over-email';
-    emailInput.name = 'email';
-    emailInput.type = 'email';
-    emailInput.placeholder = 'you@example.com';
-    emailInput.autocomplete = 'email';
 
     const actions = document.createElement('div');
     actions.className = 'game-over-form__actions';
@@ -241,8 +228,6 @@ export class GameOverOverlayComponent extends PixiContainer {
 
     form.appendChild(nicknameLabel);
     form.appendChild(nicknameInput);
-    form.appendChild(emailLabel);
-    form.appendChild(emailInput);
     form.appendChild(actions);
 
     wrapper.appendChild(heading);
@@ -256,16 +241,12 @@ export class GameOverOverlayComponent extends PixiContainer {
     if (stored?.nickname) {
       nicknameInput.value = stored.nickname;
     }
-    if (stored?.email) {
-      emailInput.value = stored.email;
-    }
 
     nicknameInput.focus({ preventScroll: true });
 
     this.formHost = wrapper;
     this.formElement = form;
     this.nicknameInput = nicknameInput;
-    this.emailInput = emailInput;
     this.submitButton = submitButton;
     this.skipButton = skipButton;
     this.statusText = status;
@@ -293,7 +274,6 @@ export class GameOverOverlayComponent extends PixiContainer {
     this.formHost = null;
     this.formElement = null;
     this.nicknameInput = null;
-    this.emailInput = null;
     this.submitButton = null;
     this.skipButton = null;
     this.statusText = null;
@@ -309,10 +289,16 @@ export class GameOverOverlayComponent extends PixiContainer {
       return;
     }
     const nickname = this.nicknameInput?.value.trim() ?? '';
-    const email = this.emailInput?.value.trim();
 
     if (!nickname) {
       this.setSubmissionState('error', 'Nickname is required.');
+      this.nicknameInput?.focus();
+      return;
+    }
+
+    const validation = validateNickname(nickname);
+    if (!validation.isValid) {
+      this.setSubmissionState('error', validation.error ?? 'Please choose a different nickname.');
       this.nicknameInput?.focus();
       return;
     }
@@ -321,7 +307,6 @@ export class GameOverOverlayComponent extends PixiContainer {
 
     const payload: ScoreSubmissionPayload = {
       nickname,
-      email: email?.length ? email : undefined,
       score: this.score
     };
 
@@ -401,15 +386,11 @@ export class GameOverOverlayComponent extends PixiContainer {
 
   private persistProfile(profile?: ScoreSubmissionPayload): void {
     const nickname = profile?.nickname ?? this.nicknameInput?.value.trim();
-    const email = profile?.email ?? this.emailInput?.value.trim();
     if (!nickname) {
       return;
     }
     try {
-      const payload: StoredProfile = {
-        nickname,
-        ...(email ? { email } : {})
-      };
+      const payload: StoredProfile = { nickname };
       window.localStorage.setItem(PLAYER_PROFILE_KEY, JSON.stringify(payload));
     } catch {
       // ignore storage errors (e.g., private mode)

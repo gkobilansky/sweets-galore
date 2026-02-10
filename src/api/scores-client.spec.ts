@@ -62,7 +62,6 @@ describe('submitScore', () => {
 
     const result = await submitScore({
       nickname: ' Tester ',
-      email: '  user@example.com ',
       score: 1234,
       maxTierReached: 5,
       piecesMerged: 42,
@@ -74,7 +73,6 @@ describe('submitScore', () => {
     expect(init?.method).toBe('POST');
     expect(init?.body).toBe(JSON.stringify({
       nickname: 'Tester',
-      email: 'user@example.com',
       score: 1234,
       maxTierReached: 5,
       piecesMerged: 42,

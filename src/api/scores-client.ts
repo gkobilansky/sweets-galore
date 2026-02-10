@@ -1,7 +1,6 @@
 export interface SubmitScorePayload {
   nickname: string;
   score: number;
-  email?: string;
   maxTierReached?: number;
   piecesMerged?: number;
   gameDurationSeconds?: number;
@@ -40,8 +39,6 @@ export async function submitScore(
     throw new Error('Score is missing');
   }
 
-  const email = payload.email?.trim();
-
   let response: Response;
   try {
     response = await fetch(SCORES_ENDPOINT, {
@@ -52,7 +49,6 @@ export async function submitScore(
       },
       body: JSON.stringify({
         nickname,
-        email: email?.length ? email : undefined,
         score: payload.score,
         maxTierReached: payload.maxTierReached,
         piecesMerged: payload.piecesMerged,

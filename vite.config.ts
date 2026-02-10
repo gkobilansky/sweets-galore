@@ -26,6 +26,7 @@ export default defineConfig({
       manifest,
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,json,mp3,ogg}'],
+        maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10 MB
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/[^/]+\/api\/(scores|leaderboard|users)/,

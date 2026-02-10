@@ -1,8 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { sql } from '@vercel/postgres';
 import { z } from 'zod';
-import { DatabaseConfigError, ensureTablesExist, normalizeEmail } from './_db.js';
+import { DatabaseConfigError, ensureTablesExist } from './_db.js';
 import { JsonBodyParseError, readJsonBody, sendJson } from './_http.js';
+import { containsProfanity } from './_profanity.js';
 
 const ScorePayloadSchema = z.object({
   nickname: z.preprocess(
@@ -16,16 +17,6 @@ const ScorePayloadSchema = z.object({
     (value) => (typeof value === 'string' ? Number(value) : value),
     z.number().int('Score must be an integer').min(0, 'Score cannot be negative').max(1_000_000_000, 'Score is unreasonably large')
   ),
-  email: z.preprocess(
-    (value) => {
-      if (typeof value !== 'string') {
-        return undefined;
-      }
-      const trimmed = value.trim();
-      return trimmed.length ? trimmed : undefined;
-    },
-    z.string().email('Email must be valid').max(254, 'Email must be 254 characters or fewer')
-  ).optional(),
   maxTierReached: z.preprocess(
     (value) => (typeof value === 'string' ? Number(value) : value),
     z.number().int().min(1).max(11)
@@ -48,21 +39,7 @@ interface DbUserRow {
 }
 
 async function ensureUserRecord(payload: ScorePayload): Promise<DbUserRow> {
-  const normalizedEmail = normalizeEmail(payload.email);
-  if (normalizedEmail) {
-    const result = await sql<DbUserRow>`
-      INSERT INTO sg_users (email, display_name)
-      VALUES (${normalizedEmail}, ${payload.nickname})
-      ON CONFLICT (email)
-      DO UPDATE SET
-        display_name = COALESCE(EXCLUDED.display_name, sg_users.display_name),
-        updated_at = NOW()
-      RETURNING id, display_name;
-    `;
-    return result.rows[0];
-  }
-
-  // For anonymous users, create a record without email
+  // Create anonymous user record with unique placeholder email
   const userResult = await sql<DbUserRow>`
     INSERT INTO sg_users (email, display_name)
     VALUES (${`anon_${Date.now()}_${Math.random().toString(36).slice(2, 8)}@anonymous.local`}, ${payload.nickname})
@@ -97,6 +74,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     }
     console.error('Unexpected error parsing score payload', error);
     sendJson(res, 500, { error: 'Unexpected error' });
+    return;
+  }
+
+  // Validate nickname for profanity
+  if (containsProfanity(payload.nickname)) {
+    sendJson(res, 400, { error: 'Please choose a different nickname.' });
     return;
   }
 
