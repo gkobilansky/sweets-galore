@@ -87,7 +87,7 @@ export const GAME_CONFIG: GameConfig = {
   dropRateLimit: 3, // 10 drops per 10 seconds
   
   // Tier system
-  allowedSpawnTierIds: [1,2,3,4,5],
+  allowedSpawnTierIds: [1,2,3,4,5,6,7],
   // Radii derived from piece-sizes.json (spriteSize * scale)
   tiers: [
     {
@@ -136,7 +136,7 @@ export const GAME_CONFIG: GameConfig = {
       radius: getRadius(6),
       points: 12,
       color: 0xFFE4B5, // peach
-      frames: ["dodo-donut"]
+      frames: ["dodo-donut", "dodo-donut-1"]
     },
     {
       id: 7,
@@ -144,7 +144,7 @@ export const GAME_CONFIG: GameConfig = {
       radius: getRadius(7),
       points: 14,
       color: 0xFFB6E1, // pink frosting
-      frames: ["frosty-franny"]
+      frames: ["frosty-franny", "frosty-franny-1"]
     },
     {
       id: 8,
@@ -152,7 +152,7 @@ export const GAME_CONFIG: GameConfig = {
       radius: getRadius(8),
       points: 16,
       color: 0xF5DEB3, // vanilla
-      frames: ["speedy-shake"]
+      frames: ["speedy-shake", "speedy-shake-1"]
     },
     {
       id: 9,
@@ -160,7 +160,7 @@ export const GAME_CONFIG: GameConfig = {
       radius: getRadius(9),
       points: 18,
       color: 0xFFFACD, // lemon chiffon
-      frames: ["vanilla-ice-ice-baby"]
+      frames: ["vanilla-ice-ice-baby", "vanilla-ice-ice-baby-1"]
     },
     {
       id: 10,
@@ -168,7 +168,7 @@ export const GAME_CONFIG: GameConfig = {
       radius: getRadius(10),
       points: 20,
       color: 0xDC143C, // crimson
-      frames: ["abby-apples"]
+      frames: ["abby-apples", "abby-apples-1"]
     },
     {
       id: 11,
@@ -176,7 +176,7 @@ export const GAME_CONFIG: GameConfig = {
       radius: getRadius(11),
       points: 22,
       color: 0xFFC0CB, // pink
-      frames: ["big-ol-cake-a-rinos"],
+      frames: ["big-ol-cake-a-rinos", "big-ol-cake-a-rinos-1"],
       cap: true
     }
   ]
